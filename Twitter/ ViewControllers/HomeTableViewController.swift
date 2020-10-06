@@ -10,10 +10,10 @@ import UIKit
 
 class HomeTableViewController: UITableViewController {
 
-    var currentDate = Date()
     var tweetArray = [NSDictionary]()
     var tweetCount: Int!
     var numberOfTweets: Int!
+    var currentDate = Date()
     
     let myRefreshControl = UIRefreshControl()
     
@@ -22,6 +22,7 @@ class HomeTableViewController: UITableViewController {
         loadTweets()
         myRefreshControl.addTarget(self, action: #selector(loadTweets), for: .valueChanged)
         tableView.refreshControl = myRefreshControl
+        loadTweet()
         
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -29,7 +30,25 @@ class HomeTableViewController: UITableViewController {
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
-    
+
+    func loadTweet() {
+        
+        let homeUrl = "https://api.twitter.com/1.1/statuses/home_timeline.json"
+        let params = ["count": 10]
+        
+        TwitterAPICaller.client?.getDictionariesRequest(url: homeUrl, parameters: params, success: { (tweets: [NSDictionary]) in
+            
+            self.tweetArray.removeAll()
+            for tweet in tweets {
+                self.tweetArray.append(tweet)
+            }
+            
+            self.tableView.reloadData()
+            
+        }, failure: { (Error) in
+            print("Could not recieve tweets! Oh no!! ")
+        })
+    }
     func getTimeElasped(date: String) -> String {
 
         let dateFormat = "E, MMM d HH:mm:ss Z yyyy"
@@ -182,7 +201,7 @@ class HomeTableViewController: UITableViewController {
             tableView.deleteRows(at: [indexPath], with: .fade)
         } else if editingStyle == .insert {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
+        }
     }
     */
 
