@@ -13,11 +13,13 @@ class HomeTableViewController: UITableViewController {
     var tweetArray = [NSDictionary]()
     var tweetCount: Int!
     
+    var currentDate = Date()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         loadTweet()
+        
         
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -45,6 +47,34 @@ class HomeTableViewController: UITableViewController {
         })
     }
     
+    func getTimeElasped(date: String) -> String {
+
+        let dateFormat = "E, MMM d HH:mm:ss Z yyyy"
+
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = dateFormat
+
+        let currentDate = Date()
+        let creationTime = dateFormatter.date(from: date)
+        
+        let dayHourMinuteSecond: Set<Calendar.Component> = [.year, .month, .day, .hour, .minute, .second]
+        let difference = NSCalendar.current.dateComponents(dayHourMinuteSecond, from: creationTime!, to: currentDate)
+        
+        let seconds = "\(difference.second ?? 0)s"
+        let minutes = "\(difference.minute ?? 0)m"
+        let hours = "\(difference.hour ?? 0)h"
+        let days = "\(difference.day ?? 0)d"
+        let months = "\(difference.month ?? 0)M"
+
+        if difference.month ?? 0 > 0 { return months }
+        if difference.day ?? 0 > 0 { return days }
+        if difference.hour ?? 0  > 0 { return hours }
+        if difference.minute ?? 0  > 0 { return minutes }
+        if difference.second ?? 0  > 0 { return seconds }
+        return ""
+    
+    }
+
 
     @IBAction func onLogout(_ sender: Any) {
         TwitterAPICaller.client?.logout()
@@ -62,8 +92,12 @@ class HomeTableViewController: UITableViewController {
         
         let retweetCount = "\(tweetArray[indexPath.row]["retweet_count"] ?? 0)"
         let favoriteCount = "\(tweetArray[indexPath.row]["favorite_count"] ?? 0)"
+        let contentDate = tweetArray[indexPath.row]["created_at"] as! String
+        let elapsedTime = getTimeElasped(date: contentDate)
+        
         cell.retweetCount.text = retweetCount
         cell.favoriteCount.text = favoriteCount
+        cell.timeLabel.text = elapsedTime
         
         let imageUrl = URL(string: (user["profile_image_url_https"] as? String)!)
         let data = try? Data(contentsOf: imageUrl!)
