@@ -10,16 +10,17 @@ import UIKit
 
 class HomeTableViewController: UITableViewController {
 
+    var currentDate = Date()
     var tweetArray = [NSDictionary]()
     var tweetCount: Int!
     
-    var currentDate = Date()
+    let myRefreshControl = UIRefreshControl()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         loadTweet()
-        
+        myRefreshControl.addTarget(self, action: #selector(loadTweet), for: .valueChanged)
+        tableView.refreshControl = myRefreshControl
         
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -28,7 +29,7 @@ class HomeTableViewController: UITableViewController {
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
     
-    func loadTweet() {
+    @objc func loadTweet() {
         
         let homeUrl = "https://api.twitter.com/1.1/statuses/home_timeline.json"
         let params = ["count": 10]
@@ -41,6 +42,7 @@ class HomeTableViewController: UITableViewController {
             }
             
             self.tableView.reloadData()
+            self.myRefreshControl.endRefreshing()
             
         }, failure: { (Error) in
             print("Could not recieve tweets! Oh no!! ")
