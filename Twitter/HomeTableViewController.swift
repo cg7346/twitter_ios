@@ -60,6 +60,11 @@ class HomeTableViewController: UITableViewController {
         cell.usernameLabel.text = user["name"] as? String
         cell.tweetContent.text = tweetArray[indexPath.row]["text"] as? String
         
+        let retweetCount = "\(tweetArray[indexPath.row]["retweet_count"] ?? 0)"
+        let favoriteCount = "\(tweetArray[indexPath.row]["favorite_count"] ?? 0)"
+        cell.retweetCount.text = retweetCount
+        cell.favoriteCount.text = favoriteCount
+        
         let imageUrl = URL(string: (user["profile_image_url_https"] as? String)!)
         let data = try? Data(contentsOf: imageUrl!)
         
