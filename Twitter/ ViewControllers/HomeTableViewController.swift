@@ -13,13 +13,14 @@ class HomeTableViewController: UITableViewController {
     var currentDate = Date()
     var tweetArray = [NSDictionary]()
     var tweetCount: Int!
+    var numberOfTweets: Int!
     
     let myRefreshControl = UIRefreshControl()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        loadTweet()
-        myRefreshControl.addTarget(self, action: #selector(loadTweet), for: .valueChanged)
+        loadTweets()
+        myRefreshControl.addTarget(self, action: #selector(loadTweets), for: .valueChanged)
         tableView.refreshControl = myRefreshControl
         
         // Uncomment the following line to preserve selection between presentations
@@ -27,26 +28,6 @@ class HomeTableViewController: UITableViewController {
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
-    }
-    
-    @objc func loadTweet() {
-        
-        let homeUrl = "https://api.twitter.com/1.1/statuses/home_timeline.json"
-        let params = ["count": 10]
-        
-        TwitterAPICaller.client?.getDictionariesRequest(url: homeUrl, parameters: params, success: { (tweets: [NSDictionary]) in
-            
-            self.tweetArray.removeAll()
-            for tweet in tweets {
-                self.tweetArray.append(tweet)
-            }
-            
-            self.tableView.reloadData()
-            self.myRefreshControl.endRefreshing()
-            
-        }, failure: { (Error) in
-            print("Could not recieve tweets! Oh no!! ")
-        })
     }
     
     func getTimeElasped(date: String) -> String {
@@ -76,8 +57,57 @@ class HomeTableViewController: UITableViewController {
         return ""
     
     }
-
-
+    
+    @objc func loadTweets() {
+        
+        numberOfTweets = 20
+        
+        let homeUrl = "https://api.twitter.com/1.1/statuses/home_timeline.json"
+        let params = ["count": numberOfTweets]
+        
+        TwitterAPICaller.client?.getDictionariesRequest(url: homeUrl, parameters: params, success: { (tweets: [NSDictionary]) in
+            
+            self.tweetArray.removeAll()
+            for tweet in tweets {
+                self.tweetArray.append(tweet)
+            }
+            
+            self.tableView.reloadData()
+            self.myRefreshControl.endRefreshing()
+            
+        }, failure: { (Error) in
+            print("Could not recieve tweets! Oh no!! ")
+        })
+    }
+    
+    func loadMoreTweets() {
+        
+        let homeUrl = "https://api.twitter.com/1.1/statuses/home_timeline.json"
+        numberOfTweets += 20
+        
+        let params = ["count": numberOfTweets]
+            
+        TwitterAPICaller.client?.getDictionariesRequest(url: homeUrl, parameters: params, success: { (tweets: [NSDictionary]) in
+            
+            self.tweetArray.removeAll()
+            for tweet in tweets {
+                self.tweetArray.append(tweet)
+            }
+            
+            self.tableView.reloadData()
+            self.myRefreshControl.endRefreshing()
+            
+        }, failure: { (Error) in
+            print("Could not recieve tweets! Oh no!! ")
+        })
+    }
+    
+    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if indexPath.row + 1 == tweetArray.count {
+            loadMoreTweets()
+        }
+    }
+    
     @IBAction func onLogout(_ sender: Any) {
         TwitterAPICaller.client?.logout()
         self.dismiss(animated: true, completion: nil)
