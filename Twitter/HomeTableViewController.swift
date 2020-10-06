@@ -65,8 +65,11 @@ class HomeTableViewController: UITableViewController {
         
         if let imageData = data {
             cell.profileImageView.image = UIImage(data: imageData)
+            
+            cell.profileImageView.layer.masksToBounds = true
+            cell.profileImageView.layer.cornerRadius = cell.profileImageView.bounds.width / 2
         }
-        
+
         return cell
     }
     
