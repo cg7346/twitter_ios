@@ -6,6 +6,7 @@
 //  Copyright © 2020 Dan. All rights reserved.
 //
 import UIKit
+
 class HomeTableViewController: UITableViewController {
      var currentDate = Date()
      var tweetArray = [NSDictionary]()
@@ -26,9 +27,9 @@ class HomeTableViewController: UITableViewController {
          // self.navigationItem.rightBarButtonItem = self.editButtonItem
      }
 
-     func getTimeElasped(date: String) -> String {
+     func getTimeElapsed(date: String) -> String {
 
-         let dateFormat = "E, MMM d HH:mm:ss Z yyyy"
+        let dateFormat = "E, MMM d HH:mm:ss Z yyyy"
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = dateFormat
         let currentDate = Date()
@@ -47,7 +48,7 @@ class HomeTableViewController: UITableViewController {
         if difference.hour ?? 0  > 0 { return hours }
         if difference.minute ?? 0  > 0 { return minutes }
         if difference.second ?? 0  > 0 { return seconds }
-         return ""
+        return ""
 
      }
 
@@ -58,7 +59,7 @@ class HomeTableViewController: UITableViewController {
          let homeUrl = "https://api.twitter.com/1.1/statuses/home_timeline.json"
          let params = ["count": numberOfTweets]
 
-         TwitterAPICaller.client?.getDictionariesRequest(url: homeUrl, parameters: params, success: { (tweets: [NSDictionary]) in
+         TwitterAPICaller.client?.getDictionariesRequest(url: homeUrl, parameters: params as [String: Any], success: { (tweets: [NSDictionary]) in
 
              self.tweetArray.removeAll()
              for tweet in tweets {
@@ -80,7 +81,7 @@ class HomeTableViewController: UITableViewController {
 
          let params = ["count": numberOfTweets]
 
-         TwitterAPICaller.client?.getDictionariesRequest(url: homeUrl, parameters: params, success: { (tweets: [NSDictionary]) in
+         TwitterAPICaller.client?.getDictionariesRequest(url: homeUrl, parameters: params as [String: Any], success: { (tweets: [NSDictionary]) in
 
              self.tweetArray.removeAll()
              for tweet in tweets {
@@ -118,7 +119,7 @@ class HomeTableViewController: UITableViewController {
         let retweetCount = "\(tweetArray[indexPath.row]["retweet_count"] ?? 0)"
         let favoriteCount = "\(tweetArray[indexPath.row]["favorite_count"] ?? 0)"
         let contentDate = tweetArray[indexPath.row]["created_at"] as! String
-        let elapsedTime = getTimeElasped(date: contentDate)
+        let elapsedTime = getTimeElapsed(date: contentDate)
         
         cell.retweetCount.text = retweetCount
         cell.favoriteCount.text = favoriteCount
@@ -145,43 +146,7 @@ class HomeTableViewController: UITableViewController {
         // #warning Incomplete implementation, return the number of rows
         return tweetArray.count
     }
-    /*
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
-        // Configure the cell...
-        return cell
-    }
-    */
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    */
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }
-    }
-    */
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-    }
-    */
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
+
     /*
     // MARK: - Navigation
     // In a storyboard-based application, you will often want to do a little preparation before navigation
