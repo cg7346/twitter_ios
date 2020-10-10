@@ -58,7 +58,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="vx8-cT-Z09" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-927.20000000000005" y="-4160.8695652173919"/>
+            <point key="canvasLocation" x="-927.536231884058" y="-4160.8695652173919"/>
         </scene>
         <!--Home-->
         <scene sceneID="HdM-R1-Fcn">
@@ -193,13 +193,21 @@
                             <outlet property="delegate" destination="AN1-1J-Jni" id="vMi-ya-ueS"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Home" id="cTw-gy-EXR">
-                        <barButtonItem key="leftBarButtonItem" title="Logout" id="wqg-ct-2jI">
+                    <navigationItem key="navigationItem" title="Home" id="vL8-Be-EEc">
+                        <leftBarButtonItems>
+                            <barButtonItem image="square.and.pencil" catalog="system" id="W9Q-6w-Y3I"/>
+                            <barButtonItem image="profile-Icon" id="eee-Pt-5Bl"/>
+                        </leftBarButtonItems>
+                        <barButtonItem key="rightBarButtonItem" title="Logout" id="SCQ-Fb-9i4">
                             <connections>
-                                <action selector="onLogout:" destination="AN1-1J-Jni" id="U8y-u6-WP6"/>
+                                <action selector="onLogout:" destination="AN1-1J-Jni" id="sal-xg-VQY"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <outlet property="logoutBarButtonItem" destination="SCQ-Fb-9i4" id="Bpj-N0-xnn"/>
+                        <outlet property="profileBarButtonItem" destination="eee-Pt-5Bl" id="iAv-kM-VFJ"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SxX-wF-kZZ" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -231,7 +239,9 @@
     <resources>
         <image name="TwitterLogoBlue" width="133.33332824707031" height="133.33332824707031"/>
         <image name="heart.fill" catalog="system" width="128" height="109"/>
+        <image name="profile-Icon" width="26" height="26"/>
         <image name="reply-icon" width="30" height="30"/>
         <image name="retweet-icon" width="30" height="30"/>
+        <image name="square.and.pencil" catalog="system" width="128" height="118"/>
     </resources>
 </document>
