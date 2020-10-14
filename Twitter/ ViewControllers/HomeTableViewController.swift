@@ -58,7 +58,7 @@ class HomeTableViewController: UITableViewController {
          let homeUrl = "https://api.twitter.com/1.1/statuses/home_timeline.json"
          let params = ["count": numberOfTweets]
 
-         TwitterAPICaller.client?.getDictionariesRequest(url: homeUrl, parameters: params, success: { (tweets: [NSDictionary]) in
+        TwitterAPICaller.client?.getDictionariesRequest(url: homeUrl, parameters: params as [String: Any], success: { (tweets: [NSDictionary]) in
 
              self.tweetArray.removeAll()
              for tweet in tweets {
@@ -80,7 +80,7 @@ class HomeTableViewController: UITableViewController {
 
          let params = ["count": numberOfTweets]
 
-         TwitterAPICaller.client?.getDictionariesRequest(url: homeUrl, parameters: params, success: { (tweets: [NSDictionary]) in
+         TwitterAPICaller.client?.getDictionariesRequest(url: homeUrl, parameters: params as [String: Any], success: { (tweets: [NSDictionary]) in
 
              self.tweetArray.removeAll()
              for tweet in tweets {
