@@ -6,29 +6,50 @@
 //  Copyright © 2020 Dan. All rights reserved.
 //
 import UIKit
+
 class HomeTableViewController: UITableViewController {
-     var currentDate = Date()
-     var tweetArray = [NSDictionary]()
-     var tweetCount: Int!
-     var numberOfTweets: Int!
-
-     let myRefreshControl = UIRefreshControl()
-
-     override func viewDidLoad() {
-         super.viewDidLoad()
-         loadTweets()
-         myRefreshControl.addTarget(self, action: #selector(loadTweets), for: .valueChanged)
-         tableView.refreshControl = myRefreshControl
-
-         // Uncomment the following line to preserve selection between presentations
+    var currentDate = Date()
+    var tweetArray = [NSDictionary]()
+    var tweetCount: Int!
+    var numberOfTweets: Int!
+    
+    let myRefreshControl = UIRefreshControl()
+    
+    @IBOutlet weak var profileBarButtonItem: UIBarButtonItem!
+    @IBOutlet weak var logoutBarButtonItem: UIBarButtonItem!
+    @IBOutlet var tweetTable: UITableView!
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        // styling the bar button items
+        profileBarButtonItem.tintColor = .white
+        logoutBarButtonItem.style = .done
+        
+        myRefreshControl.addTarget(self, action: #selector(loadTweets), for: .valueChanged)
+        self.tableView.refreshControl = myRefreshControl
+        self.tweetTable.refreshControl = myRefreshControl
+        self.tweetTable.rowHeight = UITableView.automaticDimension
+        self.tweetTable.estimatedRowHeight = 150
+        
+        
+        
+        // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-         // self.navigationItem.rightBarButtonItem = self.editButtonItem
-     }
-
-     func getTimeElasped(date: String) -> String {
-
-         let dateFormat = "E, MMM d HH:mm:ss Z yyyy"
+        // self.navigationItem.rightBarButtonItem = self.editButtonItem
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        self.loadTweets()
+        
+    }
+    
+    
+    func getTimeElapsed(date: String) -> String {
+        
+        let dateFormat = "E, MMM d HH:mm:ss Z yyyy"
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = dateFormat
         let currentDate = Date()
@@ -47,63 +68,63 @@ class HomeTableViewController: UITableViewController {
         if difference.hour ?? 0  > 0 { return hours }
         if difference.minute ?? 0  > 0 { return minutes }
         if difference.second ?? 0  > 0 { return seconds }
-         return ""
-
-     }
-
-     @objc func loadTweets() {
-
-         numberOfTweets = 20
-
-         let homeUrl = "https://api.twitter.com/1.1/statuses/home_timeline.json"
-         let params = ["count": numberOfTweets]
-
+        return ""
+        
+    }
+    
+    @objc func loadTweets() {
+        
+        numberOfTweets = 20
+        
+        let homeUrl = "https://api.twitter.com/1.1/statuses/home_timeline.json"
+        let params = ["count": numberOfTweets]
+        
         TwitterAPICaller.client?.getDictionariesRequest(url: homeUrl, parameters: params as [String: Any], success: { (tweets: [NSDictionary]) in
-
-             self.tweetArray.removeAll()
-             for tweet in tweets {
-                 self.tweetArray.append(tweet)
-             }
-
-             self.tableView.reloadData()
-             self.myRefreshControl.endRefreshing()
-
-         }, failure: { (Error) in
-             print("Could not recieve tweets! Oh no!! ")
-         })
-     }
-
-     func loadMoreTweets() {
-
-         let homeUrl = "https://api.twitter.com/1.1/statuses/home_timeline.json"
-         numberOfTweets += 20
-
-         let params = ["count": numberOfTweets]
-
-         TwitterAPICaller.client?.getDictionariesRequest(url: homeUrl, parameters: params as [String: Any], success: { (tweets: [NSDictionary]) in
-
-             self.tweetArray.removeAll()
-             for tweet in tweets {
-                 self.tweetArray.append(tweet)
-             }
-
-             self.tableView.reloadData()
-             self.myRefreshControl.endRefreshing()
-
-         }, failure: { (Error) in
-             print("Could not recieve tweets! Oh no!! ")
-         })
-     }
-
-     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-         if indexPath.row + 1 == tweetArray.count {
-             loadMoreTweets()
-         }
-     }
-
-     @IBAction func onLogout(_ sender: Any) {
-         TwitterAPICaller.client?.logout()
-         self.dismiss(animated: true, completion: nil)
+            
+            self.tweetArray.removeAll()
+            for tweet in tweets {
+                self.tweetArray.append(tweet)
+            }
+            
+            self.tableView.reloadData()
+            self.myRefreshControl.endRefreshing()
+            
+        }, failure: { (Error) in
+            print("Could not recieve tweets! Oh no!! ")
+        })
+    }
+    
+    func loadMoreTweets() {
+        
+        let homeUrl = "https://api.twitter.com/1.1/statuses/home_timeline.json"
+        numberOfTweets += 20
+        
+        let params = ["count": numberOfTweets]
+        
+        TwitterAPICaller.client?.getDictionariesRequest(url: homeUrl, parameters: params as [String: Any], success: { (tweets: [NSDictionary]) in
+            
+            self.tweetArray.removeAll()
+            for tweet in tweets {
+                self.tweetArray.append(tweet)
+            }
+            
+            self.tableView.reloadData()
+            self.myRefreshControl.endRefreshing()
+            
+        }, failure: { (Error) in
+            print("Could not recieve tweets! Oh no!! ")
+        })
+    }
+    
+    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if indexPath.row + 1 == tweetArray.count {
+            loadMoreTweets()
+        }
+    }
+    
+    @IBAction func onLogout(_ sender: Any) {
+        TwitterAPICaller.client?.logout()
+        self.dismiss(animated: true, completion: nil)
         UserDefaults.standard.set(false, forKey: "userLoggedIn")
     }
     
@@ -115,24 +136,41 @@ class HomeTableViewController: UITableViewController {
         cell.usernameLabel.text = user["name"] as? String
         cell.tweetContent.text = tweetArray[indexPath.row]["text"] as? String
         
-        let retweetCount = "\(tweetArray[indexPath.row]["retweet_count"] ?? 0)"
-        let favoriteCount = "\(tweetArray[indexPath.row]["favorite_count"] ?? 0)"
+        // getting tweet stats
+        let retweetCount = tweetArray[indexPath.row]["retweet_count"] as! Int
+        let favoriteCount = tweetArray[indexPath.row]["favorite_count"] as! Int
         let contentDate = tweetArray[indexPath.row]["created_at"] as! String
-        let elapsedTime = getTimeElasped(date: contentDate)
         
-        cell.retweetCount.text = retweetCount
-        cell.favoriteCount.text = favoriteCount
+        let elapsedTime = getTimeElapsed(date: contentDate)
+        
+        // setting tweet stats
+        cell.retweetCount.text = String(retweetCount)
+        cell.favoriteCount.text = String(favoriteCount)
         cell.timeLabel.text = elapsedTime
         
+        // getting profile image
         let imageUrl = URL(string: (user["profile_image_url_https"] as? String)!)
         let data = try? Data(contentsOf: imageUrl!)
         
+        // setting profile image
         if let imageData = data {
             cell.profileImageView.image = UIImage(data: imageData)
             
             cell.profileImageView.layer.masksToBounds = true
             cell.profileImageView.layer.cornerRadius = cell.profileImageView.bounds.width / 2
         }
+        
+        // setting favorited status and count
+        cell.setFavorite(tweetArray[indexPath.row]["favorited"] as! Bool)
+        cell.favCount = favoriteCount
+        
+        // setting retweet status and count
+        cell.setRetweet(tweetArray[indexPath.row]["retweeted"] as! Bool)
+        cell.reCount = retweetCount
+        
+        // setting tweet id
+        cell.tweetId = tweetArray[indexPath.row]["id"] as! Int
+        
         return cell
     }
     
@@ -145,49 +183,13 @@ class HomeTableViewController: UITableViewController {
         // #warning Incomplete implementation, return the number of rows
         return tweetArray.count
     }
+    
     /*
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
-        // Configure the cell...
-        return cell
-    }
-    */
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    */
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }
-    }
-    */
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-    }
-    */
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-    /*
-    // MARK: - Navigation
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
+     // MARK: - Navigation
+     // In a storyboard-based application, you will often want to do a little preparation before navigation
+     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+     // Get the new view controller using segue.destination.
+     // Pass the selected object to the new view controller.
+     }
+     */
 }
