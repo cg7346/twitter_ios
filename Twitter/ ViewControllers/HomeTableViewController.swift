@@ -17,6 +17,7 @@ class HomeTableViewController: UITableViewController {
     
     @IBOutlet weak var profileBarButtonItem: UIBarButtonItem!
     @IBOutlet weak var logoutBarButtonItem: UIBarButtonItem!
+    @IBOutlet var tweetTable: UITableView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,15 +26,26 @@ class HomeTableViewController: UITableViewController {
         profileBarButtonItem.tintColor = .white
         logoutBarButtonItem.style = .done
         
-        loadTweets()
         myRefreshControl.addTarget(self, action: #selector(loadTweets), for: .valueChanged)
-        tableView.refreshControl = myRefreshControl
+        self.tableView.refreshControl = myRefreshControl
+        self.tweetTable.refreshControl = myRefreshControl
+        self.tweetTable.rowHeight = UITableView.automaticDimension
+        self.tweetTable.estimatedRowHeight = 150
+        
+        
         
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        self.loadTweets()
+        
+    }
+    
     
     func getTimeElapsed(date: String) -> String {
         
@@ -124,24 +136,33 @@ class HomeTableViewController: UITableViewController {
         cell.usernameLabel.text = user["name"] as? String
         cell.tweetContent.text = tweetArray[indexPath.row]["text"] as? String
         
+        // getting tweet stats
         let retweetCount = "\(tweetArray[indexPath.row]["retweet_count"] ?? 0)"
         let favoriteCount = "\(tweetArray[indexPath.row]["favorite_count"] ?? 0)"
         let contentDate = tweetArray[indexPath.row]["created_at"] as! String
         let elapsedTime = getTimeElapsed(date: contentDate)
         
+        // setting tweet stats
         cell.retweetCount.text = retweetCount
         cell.favoriteCount.text = favoriteCount
         cell.timeLabel.text = elapsedTime
         
+        // getting profile image
         let imageUrl = URL(string: (user["profile_image_url_https"] as? String)!)
         let data = try? Data(contentsOf: imageUrl!)
         
+        // setting profile image
         if let imageData = data {
             cell.profileImageView.image = UIImage(data: imageData)
             
             cell.profileImageView.layer.masksToBounds = true
             cell.profileImageView.layer.cornerRadius = cell.profileImageView.bounds.width / 2
         }
+        
+        // setting favorited status
+        cell.setFavorite(tweetArray[indexPath.row]["favorited"] as! Bool)
+        
+        
         return cell
     }
     
