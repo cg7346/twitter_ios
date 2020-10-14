@@ -32,7 +32,7 @@ class TweetViewController: UIViewController {
 
     @IBAction func tweet(_ sender: Any) {
          
-        if (!tweetTextView.text.isEmpty && tweetTextView.isEqual(" ")) {
+        if (!tweetTextView.text.isEmpty) {
             
             TwitterAPICaller.client?.postTweet(tweetString: tweetTextView.text,
                                                success: { self.dismiss(animated: true, completion: nil)},
