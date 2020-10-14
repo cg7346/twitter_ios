@@ -137,14 +137,15 @@ class HomeTableViewController: UITableViewController {
         cell.tweetContent.text = tweetArray[indexPath.row]["text"] as? String
         
         // getting tweet stats
-        let retweetCount = "\(tweetArray[indexPath.row]["retweet_count"] ?? 0)"
-        let favoriteCount = "\(tweetArray[indexPath.row]["favorite_count"] ?? 0)"
+        let retweetCount = tweetArray[indexPath.row]["retweet_count"] as! Int
+        let favoriteCount = tweetArray[indexPath.row]["favorite_count"] as! Int
         let contentDate = tweetArray[indexPath.row]["created_at"] as! String
+        
         let elapsedTime = getTimeElapsed(date: contentDate)
         
         // setting tweet stats
-        cell.retweetCount.text = retweetCount
-        cell.favoriteCount.text = favoriteCount
+        cell.retweetCount.text = String(retweetCount)
+        cell.favoriteCount.text = String(favoriteCount)
         cell.timeLabel.text = elapsedTime
         
         // getting profile image
@@ -159,9 +160,16 @@ class HomeTableViewController: UITableViewController {
             cell.profileImageView.layer.cornerRadius = cell.profileImageView.bounds.width / 2
         }
         
-        // setting favorited status
+        // setting favorited status and count
         cell.setFavorite(tweetArray[indexPath.row]["favorited"] as! Bool)
+        cell.favCount = favoriteCount
         
+        // setting retweet status and count
+        cell.setRetweet(tweetArray[indexPath.row]["retweeted"] as! Bool)
+        cell.reCount = retweetCount
+        
+        // setting tweet id
+        cell.tweetId = tweetArray[indexPath.row]["id"] as! Int
         
         return cell
     }
