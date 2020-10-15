@@ -12,6 +12,7 @@ class HomeTableViewController: UITableViewController {
     var tweetArray = [NSDictionary]()
     var tweetCount: Int!
     var numberOfTweets: Int!
+//    var profileImageData: Data?
     
     let myRefreshControl = UIRefreshControl()
     
@@ -151,7 +152,7 @@ class HomeTableViewController: UITableViewController {
         // getting profile image
         let imageUrl = URL(string: (user["profile_image_url_https"] as? String)!)
         let data = try? Data(contentsOf: imageUrl!)
-        
+
         // setting profile image
         if let imageData = data {
             cell.profileImageView.image = UIImage(data: imageData)
@@ -183,13 +184,13 @@ class HomeTableViewController: UITableViewController {
         // #warning Incomplete implementation, return the number of rows
         return tweetArray.count
     }
-    
+        
     /*
      // MARK: - Navigation
      // In a storyboard-based application, you will often want to do a little preparation before navigation
      override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
      // Get the new view controller using segue.destination.
      // Pass the selected object to the new view controller.
-     }
-     */
+    }
+    */
 }

@@ -108,7 +108,7 @@ class TweetCell: UITableViewCell {
         }
     }
     
-    @IBAction func replyTwwet(_ sender: Any) {
+    @IBAction func replyTweet(_ sender: Any) {
     }
     
     override func awakeFromNib() {
