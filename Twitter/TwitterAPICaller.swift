@@ -39,6 +39,14 @@ class TwitterAPICaller: BDBOAuth1SessionManager {
         deauthorize()
     }
     
+    func userProfile(url: String, parameters: [String:Any], success: @escaping (NSDictionary) -> (), failure: @escaping (Error) -> ()){
+        TwitterAPICaller.client?.get(url, parameters: parameters, progress: nil, success: { (task: URLSessionDataTask, response: Any?) in
+            success(response as! NSDictionary)
+        }, failure: { (task: URLSessionDataTask?, error: Error) in
+            failure(error)
+        })
+    }
+    
     func getDictionaryRequest(url: String, parameters: [String:Any], success: @escaping (NSDictionary) -> (), failure: @escaping (Error) -> ()){
         TwitterAPICaller.client?.get(url, parameters: parameters, progress: nil, success: { (task: URLSessionDataTask, response: Any?) in
             success(response as! NSDictionary)
@@ -118,4 +126,6 @@ class TwitterAPICaller: BDBOAuth1SessionManager {
             failure(error)
         })
     }
+    
+    
 }

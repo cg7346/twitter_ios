@@ -10,15 +10,31 @@ import UIKit
 
 class ProfileViewController: UIViewController {
 
+    @IBOutlet weak var profileImage: UIImageView!
+    @IBOutlet weak var usernameLabel: UILabel!
+    @IBOutlet weak var taglineLabel: UILabel!
+    @IBOutlet weak var tweetsCountLabel: UILabel!
+    @IBOutlet weak var followingCountLabel: UILabel!
+    @IBOutlet weak var followersCountLabel: UILabel!
+    
+    
+    var profileArray = [NSDictionary]()
+    var user = [[String:Any]]()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
+        
     }
     
 
     @IBAction func backHome(_ sender: Any) {
         dismiss(animated: true, completion: nil)
+    }
+    
+    func test() {
+        let user = profileArray
     }
     /*
     // MARK: - Navigation

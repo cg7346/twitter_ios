@@ -47,7 +47,6 @@ class HomeTableViewController: UITableViewController {
         
     }
     
-    
     func getTimeElapsed(date: String) -> String {
         
         let dateFormat = "E, MMM d HH:mm:ss Z yyyy"
@@ -127,6 +126,21 @@ class HomeTableViewController: UITableViewController {
         TwitterAPICaller.client?.logout()
         self.dismiss(animated: true, completion: nil)
         UserDefaults.standard.set(false, forKey: "userLoggedIn")
+    }
+    
+    @IBAction func goToProfile(_ sender: Any) {
+        print("userProfile")
+        let profileUrl = "https://api.twitter.com/1.1/account/verify_credentials.json"
+        
+        //        url: String, parameters: [String:Any], success: @escaping (NSDictionary) -> (), failure: @escaping (Error) -> ()
+        let params = ["include_email": true] as [String : Any?]
+        
+        TwitterAPICaller.client?.userProfile(url: profileUrl, parameters: params as [String : Any], success: { _ in
+            self.performSegue(withIdentifier: "goToProfile", sender: self)
+            
+        }, failure: { (Error) in
+            print("Could not get users profile!")
+        })
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
