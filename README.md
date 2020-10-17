@@ -14,15 +14,17 @@ The following **required** functionality is completed:
 
 The following **bonus** features are implemented:
 
-- [ ] When composing a tweet, user sees a countdown for the number of characters remaining for the tweet (out of 280) (2pts)
-- [ ] User can view their profile in a profile tab. (3pts)
+- [x] When composing a tweet, user sees a countdown for the number of characters remaining for the tweet (out of 280) (2pts)
+- [x] User can view their profile in a profile tab. (3pts)
 - [ ] User sees embedded images in tweet if available. (3pts)
 
 ## Video Walkthrough
 
 Here's a walkthrough of implemented user stories:
-
-<img src='http://i.imgur.com/link/to/your/gif/file.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<p>
+  <img src='https://media.giphy.com/media/DhscpqJrR1hgD3DgBi/giphy.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+  <img src='https://media.giphy.com/media/Thy9SY4waIWUDZoe9q/giphy.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+</p>
 
 # Twitter - Part I
 
