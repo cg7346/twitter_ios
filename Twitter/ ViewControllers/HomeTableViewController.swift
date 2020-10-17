@@ -12,6 +12,8 @@ class HomeTableViewController: UITableViewController {
     var tweetArray = [NSDictionary]()
     var tweetCount: Int!
     var numberOfTweets: Int!
+    var statsDictionary = NSDictionary()
+    var testEntities = [NSDictionary]()
 //    var profileImageData: Data?
     
     let myRefreshControl = UIRefreshControl()
@@ -44,7 +46,12 @@ class HomeTableViewController: UITableViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.loadTweets()
-        
+        // assuming "self" is embedded in a navigation controller
+//        if let tabBarController = self.parent?.parent as? UITabBarController {
+//            self.tabBarController?.performSegue(withIdentifier: "goToProfile", sender: self.tabBarController)
+//        }
+//        
+        //        self.loadEntites()
     }
     
     func getTimeElapsed(date: String) -> String {
@@ -89,6 +96,27 @@ class HomeTableViewController: UITableViewController {
             self.tableView.reloadData()
             self.myRefreshControl.endRefreshing()
             
+            
+        }, failure: { (Error) in
+            print("Could not recieve tweets! Oh no!! ")
+        })
+    }
+    
+    @objc func loadEntites() {
+
+        let homeUrl = "https://api.twitter.com/1.1/statuses/home_timeline.json"
+        let params = ["include_entities": true]
+        
+        TwitterAPICaller.client?.getDictionariesRequest(url: homeUrl, parameters: params as [String: Any], success: { (entities: [NSDictionary]) in
+            
+            self.testEntities.removeAll()
+            for entity in entities {
+                self.testEntities.append(entity)
+            }
+            print(self.testEntities)
+            self.tableView.reloadData()
+            self.myRefreshControl.endRefreshing()
+            
         }, failure: { (Error) in
             print("Could not recieve tweets! Oh no!! ")
         })
@@ -120,6 +148,7 @@ class HomeTableViewController: UITableViewController {
         if indexPath.row + 1 == tweetArray.count {
             loadMoreTweets()
         }
+        
     }
     
     @IBAction func onLogout(_ sender: Any) {
@@ -129,21 +158,27 @@ class HomeTableViewController: UITableViewController {
     }
     
     @IBAction func goToProfile(_ sender: Any) {
-        print("userProfile")
+    
         let profileUrl = "https://api.twitter.com/1.1/account/verify_credentials.json"
         
-        //        url: String, parameters: [String:Any], success: @escaping (NSDictionary) -> (), failure: @escaping (Error) -> ()
         let params = ["include_email": true] as [String : Any?]
         
-        TwitterAPICaller.client?.userProfile(url: profileUrl, parameters: params as [String : Any], success: { _ in
-            self.performSegue(withIdentifier: "goToProfile", sender: self)
+        TwitterAPICaller.client?.getUserProfile(url: profileUrl, parameters: params as [String : Any], success: {
+                (stats: NSDictionary) in
+                    self.statsDictionary = stats
+                    self.tableView.reloadData()
+                    self.myRefreshControl.endRefreshing()
+
+                    self.performSegue(withIdentifier: "goToProfile", sender: self)
             
-        }, failure: { (Error) in
-            print("Could not get users profile!")
-        })
+            }, failure: { (Error) in
+                print("Could not get users profile!")
+            })
+        
     }
-    
+
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
         let cell = tableView.dequeueReusableCell(withIdentifier: "TweetCell", for: indexPath) as! TweetCell
         
         let user = tweetArray[indexPath.row]["user"] as! NSDictionary
@@ -199,12 +234,19 @@ class HomeTableViewController: UITableViewController {
         return tweetArray.count
     }
         
-    /*
+    
      // MARK: - Navigation
      // In a storyboard-based application, you will often want to do a little preparation before navigation
      override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
      // Get the new view controller using segue.destination.
      // Pass the selected object to the new view controller.
+        if segue.identifier == "goToProfile" {
+            
+            let profileVC = segue.destination as! ProfileViewController
+
+            print(statsDictionary)
+            profileVC.profileDictionary = statsDictionary
+        }
+            
     }
-    */
 }
